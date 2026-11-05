@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Piezas del mes</title>
+<meta name="description" content="El dinero del día a día en piezas de colores que se ven y se tocan. Un prototipo para familias.">
+<meta property="og:title" content="Piezas del mes">
+<meta property="og:description" content="El dinero del día a día en piezas de colores que se ven y se tocan.">
+<meta property="og:image" content="mesa-real.jpg">
+<meta name="theme-color" content="#e9a9c9">
+<link rel="icon" href="icono-192.png">
+<link rel="apple-touch-icon" href="icono-180.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<style>
+:root{--bg:#f7f6f2;--panel:#fff;--fg:#22211d;--muted:#67655d;--line:#dedbd1;--pink:#e9a9c9;--grey:#6b6d72;--accent:#0055bf;--accent-fg:#fff;
+  --display:"Bricolage Grotesque",ui-rounded,system-ui,sans-serif;--body:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",sans-serif;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#17181b;--panel:#212226;--fg:#f0efea;--muted:#a6a49c;--line:#383940;--accent:#5a9bff;--accent-fg:#0c1220;color-scheme:dark}}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--fg);font:17px/1.5 var(--body)}
+.w{max-width:1040px;margin:0 auto;padding-left:max(18px,env(safe-area-inset-left,0px));padding-right:max(18px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--display);line-height:1.05;margin:0;text-wrap:balance}
+h1{font-size:clamp(40px,7vw,76px);font-weight:800;letter-spacing:-.02em}
+h2{font-size:clamp(26px,4vw,38px);font-weight:800}
+h3{font-size:20px}
+p{margin:0}
+.muted{color:var(--muted)}
+.hero{padding-block:48px 40px;display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center}
+.hero>*{min-width:0}
+.lead{font-size:21px;margin-top:18px;max-width:34ch}
+.cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px}
+.btn{display:inline-block;font-weight:700;text-decoration:none;padding:14px 22px;border-radius:12px;border:1px solid var(--line);color:var(--fg);background:var(--panel)}
+.btn.primary{background:var(--accent);color:var(--accent-fg);border-color:var(--accent)}
+.btn:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+figure{margin:0}
+.photo{border-radius:18px;overflow:hidden;border:6px solid var(--pink);transform:rotate(1.5deg);box-shadow:0 18px 40px rgba(0,0,0,.18)}
+.photo img{display:block;width:100%;height:auto}
+figcaption{font-size:14px;color:var(--muted);margin-top:12px;text-align:center}
+section{padding-block:44px;border-top:1px solid var(--line)}
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:28px;margin-top:22px}
+.two.three{grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px;display:grid;gap:10px;align-content:start}
+.plate{border-radius:12px;padding:14px;background-color:var(--c);background-image:radial-gradient(circle,rgba(0,0,0,.1) 0 3px,transparent 3.5px);background-size:14px 14px;color:#2b1a22;font-weight:700;font-size:14px;letter-spacing:.04em;text-transform:uppercase}
+.rules{list-style:none;margin:22px 0 0;padding:0;display:grid;gap:16px;counter-reset:r}
+.rules li{display:grid;grid-template-columns:44px 1fr;gap:14px;align-items:start}
+.rules li::before{counter-increment:r;content:counter(r);font-family:var(--display);font-weight:800;font-size:22px;width:40px;height:40px;border-radius:9px;display:grid;place-items:center;color:#fff;background:var(--b)}
+.rules li:nth-child(1){--b:#237841}.rules li:nth-child(2){--b:#c91a09}.rules li:nth-child(3){--b:#0055bf}.rules li:nth-child(4){--b:#d67923}.rules li:nth-child(5){--b:#6b6d72}
+.price{font-family:var(--display);font-size:44px;font-weight:800}
+.pill{display:inline-block;font-size:13px;font-weight:700;padding:3px 10px;border-radius:999px;background:#fbe9c4;color:#7a4b00;justify-self:start}
+footer{padding-block:30px 50px;border-top:1px solid var(--line);font-size:14px;color:var(--muted)}
+.brick{--c:#999;display:inline-block;position:relative;width:46px;height:16px;border-radius:3px;background:var(--c);border:1px solid rgba(0,0,0,.35);margin-top:6px;vertical-align:bottom}
+.brick::before,.brick::after{content:"";position:absolute;top:-6px;width:12px;height:5px;border-radius:2px 2px 0 0;background:var(--c);border:1px solid rgba(0,0,0,.35);border-bottom:0}
+.brick::before{left:7px}.brick::after{right:7px}
+@media (max-width:760px){.hero,.two,.two.three{grid-template-columns:1fr}.hero{padding-top:28px}.photo{transform:none}}
+</style>
+</head>
+<body>
+<div class="w">
+  <header class="hero">
+    <div>
+      <p><span class="brick" style="--c:#237841"></span> <span class="brick" style="--c:#f2cd37"></span> <span class="brick" style="--c:#c91a09"></span> <span class="brick" style="--c:#0055bf"></span></p>
+      <h1 style="margin-top:14px">Piezas del mes</h1>
+      <p class="lead">El dinero del día a día, en piezas de colores que se ven y se tocan. Para que toda la familia, también los niños, entienda en qué se va el mes y cuánto se ahorra.</p>
+      <div class="cta">
+        <a class="btn primary" href="app.html">Probar la app</a>
+        <a class="btn" href="#como">Cómo funciona</a>
+      </div>
+      <p class="muted" style="margin-top:14px;font-size:15px">Prototipo gratuito. Funciona en el ordenador y en el móvil, y no hace falta registrarse.</p>
+    </div>
+    <figure>
+      <div class="photo"><img src="mesa-real.jpg" width="599" height="791" alt="La base del mes, rosa, con piezas de colores en filas y columnas, y detrás la base gris de los gastos"></div>
+      <figcaption>La mesa de una familia real: delante la base del mes, detrás la de los gastos.</figcaption>
+    </figure>
+  </header>
+
+  <section id="como">
+    <h2>Cómo es la mesa: tres bases</h2>
+    <div class="two three">
+      <div class="card">
+        <div class="plate" style="--c:#e9a9c9">Base del mes</div>
+        <p>Una fila para cada cosa en la que gastáis (comida, ocio, gasolina, casa…) y una columna para cada semana. Cada pieza vale, por ejemplo, 10 €.</p>
+      </div>
+      <div class="card">
+        <div class="plate" style="--c:#6b6d72;color:#f0efea">Base de los gastos</div>
+        <p>Cuando alguien de casa paga algo, pasa esas piezas a esta base, en la columna de la semana. Así se ve de un vistazo qué semana ha ido cara.</p>
+      </div>
+      <div class="card">
+        <div class="plate" style="--c:#f2cd37">Base de la hucha</div>
+        <p>Al cerrar cada semana, lo que sobra (después de tapar huecos) viene aquí. A fin de mes, en esta base veis cuánto habéis ahorrado.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Las reglas</h2>
+    <ol class="rules">
+      <li><div><h3>El día 1 se monta la mesa</h3><p class="muted">La app os dice cuántas piezas de cada color van en cada semana, según vuestro plan.</p></div></li>
+      <li><div><h3>Al pagar, la pieza pasa atrás</h3><p class="muted">Se redondea: 23 € son 2 piezas de 10 €; 27 € son 3. Lo que se cobra solo del banco (hipoteca, luz, seguros) no entra en la mesa.</p></div></li>
+      <li><div><h3>Si se acaba un color, se coge de la semana siguiente</h3><p class="muted">Del mismo color, y con sus consecuencias: esa semana tendrá menos. Si ya no queda de ese color, la semana se queda en rojo. Los imprevistos son solo para imprevistos.</p></div></li>
+      <li><div><h3>Al cerrar la semana, lo que sobra se mueve</h3><p class="muted">Primero tapa los huecos de las semanas siguientes: del mismo color y, si ya están llenos, cambiando de color, solo los que falten. Lo que quede va a la hucha, o se guarda de más en una semana en la que sabéis que viene un gasto.</p></div></li>
+      <li><div><h3>A fin de mes, mirad la hucha</h3><p class="muted">En la base de la hucha se ve cuánto habéis ahorrado: cada pieza es dinero que no se ha gastado.</p></div></li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>La app y las piezas</h2>
+    <div class="two">
+      <div class="card">
+        <h3>La app</h3>
+        <p>Hacéis el plan, apuntáis cada gasto y la app os dice cuántas piezas mover. Calcula sola los préstamos entre semanas, los huecos y la hucha, y genera la hoja de reglas para la nevera.</p>
+        <p class="muted">Los datos se guardan solo en vuestro navegador. En el móvil, «Añadir a pantalla de inicio» la deja como una app más.</p>
+        <a class="btn primary" href="app.html" style="justify-self:start">Abrir la app</a>
+      </div>
+      <div class="card">
+        <span class="pill">Prototipo, aún no a la venta</span>
+        <h3>Con vuestras piezas o con nuestro kit</h3>
+        <p>Si en casa hay piezas de construcción del mismo tamaño, valen. La app calcula cuántas hacen falta de cada color, con un 20 o 30 % de repuesto.</p>
+        <p class="price">29 €</p>
+        <p class="muted">Kit previsto: unas 120 piezas compatibles en 6 colores, base del mes, base de los gastos, base de la hucha, pegatinas de valor y hoja de reglas.</p>
+      </div>
+    </div>
+  </section>
+</div>
+<footer><div class="w">Piezas del mes · prototipo de arkinos.net · Usa piezas de construcción compatibles; no tiene relación con ninguna marca de juguetes.</div></footer>
+<script>if("serviceWorker" in navigator&&location.protocol.startsWith("http"))navigator.serviceWorker.register("sw.js").catch(()=>{});</script>
+</body>
+</html>

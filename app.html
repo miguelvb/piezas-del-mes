@@ -1,0 +1,589 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#e9a9c9">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icono-192.png">
+<link rel="apple-touch-icon" href="icono-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Piezas del mes">
+<style>html{color-scheme:light}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Piezas del mes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<style>
+/* Layout: una barra de pestañas arriba, la mesa con sus tres bases como protagonista, el resto en paneles de una columna */
+:root{
+  --bg:#f7f6f2; --panel:#ffffff; --fg:#22211d; --muted:#67655d; --line:#dedbd1; --soft:#efede6;
+  --accent:#0055bf; --accent-fg:#ffffff; --good:#237841; --warn:#b06a00; --bad:#c91a09;
+  --ghost:rgba(34,33,29,.22);
+  --display:"Bricolage Grotesque",ui-rounded,system-ui,sans-serif;
+  --body:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#17181b; --panel:#212226; --fg:#f0efea; --muted:#a6a49c; --line:#383940; --soft:#2a2b30;
+  --accent:#5a9bff; --accent-fg:#0c1220; --good:#4fb26f; --warn:#e3a33a; --bad:#ff6b5a; --ghost:rgba(240,239,234,.25); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#17181b; --panel:#212226; --fg:#f0efea; --muted:#a6a49c; --line:#383940; --soft:#2a2b30;
+  --accent:#5a9bff; --accent-fg:#0c1220; --good:#4fb26f; --warn:#e3a33a; --bad:#ff6b5a; --ghost:rgba(240,239,234,.25); color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:16px/1.45 var(--body);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 40px}
+.wrap{max-width:980px;margin:0 auto}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.1}
+h1{font-size:30px;font-weight:800;letter-spacing:-.01em}
+h2{font-size:22px;font-weight:700}
+h3{font-size:17px;font-weight:700}
+p{margin:0}
+.muted{color:var(--muted)}
+.num{font-variant-numeric:tabular-nums}
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:14px 8px;border-bottom:1px solid var(--line)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.brand{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:space-between}
+.brand .logo{display:flex;gap:10px;align-items:center}
+nav.tabs{display:flex;gap:4px;margin-top:10px;overflow-x:auto;scrollbar-width:none}
+nav.tabs a{flex:none;padding:7px 12px;border-radius:999px;color:var(--fg);text-decoration:none;font-weight:700;font-size:15px}
+nav.tabs a[aria-current="page"]{background:var(--fg);color:var(--bg)}
+nav.tabs a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+main{padding-top:18px;display:grid;gap:18px}
+main>*,.panel{min-width:0}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.between{justify-content:space-between}
+button,.btn{font:inherit;font-weight:700;border:1px solid var(--line);background:var(--panel);color:var(--fg);padding:9px 14px;border-radius:10px;cursor:pointer}
+button.primary{background:var(--accent);color:var(--accent-fg);border-color:var(--accent)}
+button.big{font-size:18px;padding:12px 20px}
+button.link{border:0;background:none;padding:4px;color:var(--accent);text-decoration:underline}
+button.danger{color:var(--bad)}
+input,select{font:inherit;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px;min-width:0}
+input[type=number]{width:96px}
+label.f{display:grid;gap:4px;font-weight:700;font-size:14px}
+.banner{background:var(--soft);border:1px dashed var(--line);border-radius:12px;padding:12px 14px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+
+/* Piezas: los colores son de plástico, iguales en los dos temas */
+.brick{--c:#999;display:inline-block;position:relative;width:46px;height:16px;border-radius:3px;background:var(--c);
+  border:1px solid rgba(0,0,0,.35);margin-top:6px;box-shadow:inset 0 -3px 0 rgba(0,0,0,.14);-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.brick::before,.brick::after{content:"";position:absolute;top:-6px;width:12px;height:5px;border-radius:2px 2px 0 0;background:var(--c);border:1px solid rgba(0,0,0,.35);border-bottom:0}
+.brick::before{left:7px}.brick::after{right:7px}
+.brick.ghost{background:transparent;border:1.5px dashed var(--ghost);box-shadow:none}
+.brick.ghost::before,.brick.ghost::after{background:transparent;border-color:var(--ghost);border-style:dashed}
+.brick.sm{width:28px;height:13px;margin:6px 1px 0}
+.brick.sm::before,.brick.sm::after{width:7px;left:auto}
+.brick.sm::before{left:4px}.brick.sm::after{right:4px}
+.brick.new{animation:drop .35s ease-out both}
+@keyframes drop{from{transform:translateY(-14px);opacity:.3}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){.brick.new{animation:none}}
+
+/* Mesa */
+.table{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;align-items:end;overflow-x:auto;padding-bottom:4px}
+.tower{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:64px}
+.stack{display:flex;flex-direction:column-reverse;align-items:center;gap:0;min-height:60px;padding:6px 6px 0;border-radius:10px 10px 0 0}
+.stack .brick{margin-top:6px}
+.base{width:100%;height:10px;border-radius:3px;background:var(--fg);opacity:.85}
+.tower .tl{font-weight:700;font-family:var(--display);font-size:16px}
+.tower .ts{font-size:13px;color:var(--muted);text-align:center}
+.tower.now .stack{background:var(--soft);outline:2px solid var(--accent);outline-offset:-2px}
+.tower.now .tl::after{content:" · ahora";color:var(--accent)}
+.tower.done{opacity:.65}
+.pill{display:inline-block;font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--soft)}
+.pill.good{color:var(--good)}.pill.warn{color:var(--warn)}.pill.bad{color:var(--bad)}
+@media (max-width:640px){
+  .table{grid-template-columns:repeat(3,minmax(0,1fr));row-gap:18px}
+  .brick{width:38px;height:13px}
+  .stack .brick{margin-top:5px}
+  header.top{position:static}
+  button.big{font-size:16px;padding:10px 14px}
+  h1{font-size:24px}
+}
+
+
+/* Placas como en la mesa: delante filas de colores × semanas, detrás lo gastado */
+.plate{--stud:rgba(0,0,0,.10);border-radius:12px;padding:12px;margin-top:14px;overflow-x:auto;
+  background-color:var(--pc);background-image:radial-gradient(circle at 50% 50%,var(--stud) 0 3px,transparent 3.5px);background-size:14px 14px}
+.plate.plan{--pc:#e9a9c9}
+.plate.gastado{--pc:#6b6d72;--stud:rgba(255,255,255,.12)}
+.plate.side{--pc:var(--soft);margin-top:0}
+.plabel{font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;color:#2b1a22}
+.gastado .plabel{color:#f0efea}
+.side .plabel{color:var(--muted)}
+.grid{display:grid;grid-template-columns:minmax(76px,auto) repeat(4,minmax(64px,1fr));gap:6px 8px;align-items:end;min-width:360px}
+.gl{display:flex;gap:6px;align-items:center;font-size:14px;color:#2b1a22;align-self:center}
+.gastado .gl{color:#f0efea}
+.gh{font-family:var(--display);font-weight:800;text-align:center;color:#2b1a22;font-size:16px}
+.gh small{display:block;font-family:var(--body);font-weight:400;font-size:11px}
+.gh.now{text-decoration:underline 3px;text-underline-offset:4px}
+.gc{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:2px;min-height:40px;border-radius:8px;padding:2px 0 4px}
+.gc.now{background:rgba(255,255,255,.35)}
+.gastado .gc.now{background:rgba(255,255,255,.12)}
+.gc.done{opacity:.7}
+.pile{display:flex;flex-direction:column-reverse;align-items:center}
+.pile .brick{margin-top:5px}
+.brick.conv{outline:2px dotted #fff;outline-offset:-4px}
+.pile.row{flex-direction:row;flex-wrap:wrap;gap:4px;align-items:flex-end;min-height:30px}
+.pile.row .brick{width:34px}
+.cnt{font-size:12px;color:#2b1a22}
+.gastado .cnt{color:#f0efea}
+.gf{text-align:center;font-size:14px;color:#2b1a22;display:grid;gap:2px;justify-items:center}
+.extras{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-top:12px}
+.extras p{font-size:14px;margin-top:6px}
+@media (max-width:640px){.grid .brick{width:34px;height:12px}.grid{grid-template-columns:62px repeat(4,minmax(52px,1fr));gap:4px 4px}.gl span:last-child{font-size:12px}}
+
+/* Leyenda y listas */
+.legend{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px}
+.leg{display:flex;gap:10px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:8px 10px;min-width:0}
+.leg small{display:block;color:var(--muted)}
+.list{display:grid;gap:0}
+.item{display:grid;grid-template-columns:auto 1fr auto auto;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}
+.item:last-child{border-bottom:0}
+.dot{width:14px;height:14px;border-radius:3px;border:1px solid rgba(0,0,0,.3);background:var(--c)}
+
+/* Tablas */
+.tw{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
+th,td{padding:8px 6px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}
+th{font-size:13px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:700}
+td.r,th.r{text-align:right}
+tfoot td{font-weight:700}
+
+/* Selector de color */
+.swatches{display:flex;gap:6px;flex-wrap:wrap}
+.sw{width:30px;height:30px;border-radius:6px;border:2px solid transparent;background:var(--c);box-shadow:inset 0 0 0 1px rgba(0,0,0,.3);padding:0;cursor:pointer}
+.sw[aria-pressed="true"]{border-color:var(--fg);outline:2px solid var(--panel);outline-offset:-4px}
+.catpick{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px}
+.catpick button{display:flex;gap:8px;align-items:center;text-align:left;font-weight:700}
+.catpick button[aria-pressed="true"]{border-color:var(--fg);box-shadow:0 0 0 2px var(--fg) inset}
+
+/* Ventana de gasto */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:20;display:grid;place-items:end center;padding:16px}
+.sheet{background:var(--panel);color:var(--fg);border-radius:16px;padding:18px;width:min(520px,100%);max-height:90vh;overflow:auto;display:grid;gap:14px;
+  margin-bottom:env(safe-area-inset-bottom,0px)}
+@media (min-width:700px){.overlay{place-items:center}}
+.preview{font-size:15px;min-height:40px}
+
+/* Hoja imprimible */
+.sheet-print .brick{width:30px;height:14px}
+.rules{padding-left:22px;display:grid;gap:8px;margin:0}
+.kit{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+.price{font-family:var(--display);font-size:34px;font-weight:800}
+.steps{display:grid;gap:12px;counter-reset:s;margin:0;padding:0;list-style:none}
+.steps li{display:grid;grid-template-columns:36px 1fr;gap:10px;align-items:start}
+.steps li::before{counter-increment:s;content:counter(s);font-family:var(--display);font-weight:800;font-size:20px;width:32px;height:32px;border-radius:8px;display:grid;place-items:center;background:var(--fg);color:var(--bg)}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom,0px));background:var(--fg);color:var(--bg);padding:10px 16px;border-radius:999px;font-weight:700;z-index:30}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+<header class="top">
+  <div class="brand">
+    <div class="logo"><a href="index.html" style="color:inherit;text-decoration:none;display:flex;gap:10px;align-items:center" aria-label="Volver a la portada">
+      <span class="brick" style="--c:#c91a09;width:34px" aria-hidden="true"></span>
+      <div><h1>Piezas del mes</h1><p class="muted" id="fam" style="font-size:14px"></p></div></a>
+    </div>
+    <button class="primary big" id="addBtn" type="button">+ Apuntar gasto</button>
+  </div>
+  <nav class="tabs" aria-label="Secciones">
+    <a href="#mesa">La mesa</a>
+    <a href="#plan">Mi plan</a>
+    <a href="#hoja">Hoja de reglas</a>
+    <a href="#kit">Las piezas</a>
+    <a href="#como">Cómo funciona</a>
+  </nav>
+</header>
+<main id="view"></main>
+</div>
+<div id="modal"></div>
+<div id="toast" class="toast" hidden></div>
+
+<script>
+const COLORS={
+  verde:{hex:'#237841',name:'Verde'}, amarillo:{hex:'#f2cd37',name:'Amarillo'}, rojo:{hex:'#c91a09',name:'Rojo'},
+  blanco:{hex:'#f4f4f4',name:'Blanco'}, azul:{hex:'#0055bf',name:'Azul'}, marron:{hex:'#7c5034',name:'Marrón'},
+  naranja:{hex:'#d67923',name:'Naranja'}, negro:{hex:'#2a2a2a',name:'Negro'}, rosa:{hex:'#e4adc8',name:'Rosa'},
+  lila:{hex:'#8a5ab8',name:'Lila'}, celeste:{hex:'#6fb6e6',name:'Celeste'}, lima:{hex:'#a5ca18',name:'Lima'}
+};
+const MONTHS=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+const KEY='torres-del-mes-v1';
+const pad=n=>String(n).padStart(2,'0');
+const todayISO=()=>{const d=new Date();return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`};
+const monthOf=iso=>iso.slice(0,7);
+const uid=()=>Math.random().toString(36).slice(2,9);
+const eur=n=>new Intl.NumberFormat('es-ES',{style:'currency',currency:'EUR',maximumFractionDigits:n%1?2:0}).format(n);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+function sampleState(){
+  const m=monthOf(todayISO());
+  return {
+    sample:true, family:'Ejemplo: una familia con dos niñas', value:10, month:m,
+    cats:[
+      {id:'comida',name:'Comida',desc:'El súper: Mas, Lidl, Aldi',color:'verde',amount:300},
+      {id:'gasolina',name:'Gasolina',desc:'El coche y la moto',color:'rojo',amount:110},
+      {id:'ocio',name:'Ocio',desc:'Bares, conciertos, Bizum',color:'amarillo',amount:80},
+      {id:'bolsillo',name:'Bolsillo',desc:'Dinero suelto en efectivo',color:'blanco',amount:100},
+      {id:'hogar',name:'Hogar',desc:'Cosas de casa, farmacia, médico',color:'azul',amount:150}
+    ],
+    impr:{on:true,amount:150,color:'marron',name:'Imprevistos',desc:'Lo que no esperábamos (taller…)'},
+    spends:[
+      {id:uid(),date:`${m}-02`,cat:'comida',amount:38.5,note:'Compra grande'},
+      {id:uid(),date:`${m}-03`,cat:'gasolina',amount:28,note:'Media de depósito'},
+      {id:uid(),date:`${m}-04`,cat:'ocio',amount:12,note:'Cañas'},
+      {id:uid(),date:`${m}-05`,cat:'comida',amount:24.2,note:''},
+    ],
+    history:[], moves:[], spareP:20
+  };
+}
+let S;
+try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){S=null}
+if(!S||!S.cats||S.sample)S=sampleState();
+S.moves=S.moves||[];S.spareP=S.spareP||20;
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+
+/* ---------- Cálculos ---------- */
+const W=4;
+const weekOfDay=d=>d<=7?0:d<=14?1:d<=21?2:3;
+const WEEK_LABEL=['Semana 1','Semana 2','Semana 3','Semana 4'];
+const WEEK_DAYS=['días 1–7','días 8–14','días 15–21','días 22–fin'];
+function bricksFor(amount){return Math.max(0,Math.round(amount/S.value))}
+function split(n){ // reparte n piezas en 4 torres, los restos primero en las semanas 1 y 3
+  const base=Math.floor(n/W), r=n%W, order=[0,2,1,3], out=[base,base,base,base];
+  for(let i=0;i<r;i++)out[order[i]]++; return out;
+}
+function daysInMonth(m){const [y,mo]=m.split('-').map(Number);return new Date(y,mo,0).getDate()}
+function weekEndDay(w,m){return w<3?(w+1)*7:daysInMonth(m)}
+function compute(){
+  const today=todayISO(), tm=monthOf(today), tday=+today.slice(8);
+  const cur = S.month===tm ? weekOfDay(tday) : (S.month<tm?4:-1); // 4 = mes ya terminado
+  const weeks=[0,1,2,3].map(w=>({w,cats:{},imprUsed:0,red:0,closed: cur>w, now: cur===w}));
+  for(const c of S.cats){
+    const sp=split(bricksFor(c.amount));
+    for(let w=0;w<W;w++){
+      const eurSpent=S.spends.filter(s=>s.cat===c.id&&monthOf(s.date)===S.month&&weekOfDay(+s.date.slice(8))===w).reduce((a,s)=>a+s.amount,0);
+      const used=Math.round(eurSpent/S.value);
+      weeks[w].cats[c.id]={planned:sp[w],used,eur:eurSpent,own:Math.min(used,sp[w]),lent:0};
+    }
+  }
+  const imprPlanned=S.impr.on?bricksFor(S.impr.amount):0;
+  const imprEur=S.spends.filter(s=>s.cat==='impr'&&monthOf(s.date)===S.month).reduce((a,s)=>a+s.amount,0);
+  let imprUsed=Math.round(imprEur/S.value);
+  // Reglas: (3) si se acaba un color en una semana, se cogen piezas del mismo color de las semanas siguientes;
+  // si ya no quedan de ese color, la semana queda en rojo. Los imprevistos son solo para imprevistos.
+  // (4) al cerrar la semana, lo que sobra rellena primero los huecos del mismo color en las semanas siguientes,
+  // luego los huecos de otros colores (la pieza "cambia de color", solo las que falten), y lo que quede va a la hucha.
+  const hucha=[];
+  for(const wk of weeks){wk.deficit=0;wk.fromImpr=0;wk.red=0;wk.lentAhead=0;wk.refilledOut=0;wk.toHucha=0;
+    for(const id in wk.cats){const x=wk.cats[id];x.lent=0;x.borrowed=0;x.refill=[]}}
+  const leftOf=x=>x.planned+x.refill.length-x.lent-x.own;
+  for(let w=0;w<W;w++){
+    const wk=weeks[w];
+    for(const c of S.cats){
+      const x=wk.cats[c.id];
+      const avail=x.planned+x.refill.length-x.lent; x.own=Math.min(x.used,avail);
+      let need=x.used-x.own;
+      if(need>0)wk.deficit+=need;
+      for(let v=w+1;v<W&&need>0;v++){const y=weeks[v].cats[c.id];const t=Math.min(y.planned+y.refill.length-y.lent,need);
+        if(t>0){y.lent+=t;x.borrowed+=t;need-=t;weeks[v].lentAhead+=t}}
+      wk.red+=need;
+    }
+    if(!wk.closed)continue;
+    // Sobrantes de la semana cerrada
+    const spare={}; for(const c of S.cats)spare[c.id]=leftOf(wk.cats[c.id]);
+    // hueco = lo que falta para volver a tener lo planeado
+    const gap=(v,id)=>{const y=weeks[v].cats[id];return Math.max(0,y.planned-(y.planned+y.refill.length-y.lent))};
+    const give=(from,v,id)=>{weeks[v].cats[id].refill.push(colorOf(from));spare[from]--;wk.cats[from].moved=(wk.cats[from].moved||0)+1;wk.refilledOut++};
+    for(const c of S.cats)for(let v=w+1;v<W;v++)while(spare[c.id]>0&&gap(v,c.id)>0)give(c.id,v,c.id);
+    for(let v=w+1;v<W;v++)for(const c of S.cats)while(gap(v,c.id)>0){const from=S.cats.find(o=>spare[o.id]>0);if(!from)break;give(from.id,v,c.id)}
+    // Decisión de la familia: en vez de a la hucha, guardar piezas de más para una semana que sabemos que viene cara
+    wk.spareFree=S.cats.reduce((a,c)=>a+spare[c.id],0); wk.saved=0;
+    for(const m of S.moves.filter(m=>m.from===w&&m.to>w&&m.to<W&&weeks[m.to].cats[m.cat])){
+      let n=m.n; m.applied=0;
+      const order=[m.cat,...S.cats.map(c=>c.id).filter(id=>id!==m.cat)];
+      for(const id of order)while(n>0&&spare[id]>0){weeks[m.to].cats[m.cat].refill.push(colorOf(id));spare[id]--;n--;m.applied++;wk.saved++}
+    }
+    for(const c of S.cats)for(let i=0;i<spare[c.id];i++){hucha.push(c.color);wk.toHucha++}
+    for(const c of S.cats){const x=wk.cats[c.id];x.closedLeft=spare[c.id]}
+  }
+  for(const wk of weeks){
+    wk.planned=Object.values(wk.cats).reduce((a,c)=>a+c.planned,0);
+    wk.left=wk.closed?0:Object.values(wk.cats).reduce((a,x)=>a+leftOf(x),0);
+    wk.eur=Object.values(wk.cats).reduce((a,c)=>a+c.eur,0);
+    for(const id in wk.cats){const x=wk.cats[id];x.left=wk.closed?0:leftOf(x)}
+  }
+  const totalPlanned=S.cats.reduce((a,c)=>a+c.amount,0)+(S.impr.on?S.impr.amount:0);
+  const spentMonth=S.spends.filter(s=>monthOf(s.date)===S.month).reduce((a,s)=>a+s.amount,0);
+  return {weeks,cur,imprPlanned,imprUsed,imprEur,hucha,totalPlanned,spentMonth};
+}
+const colorOf=id=>id==='impr'?S.impr.color:(S.cats.find(c=>c.id===id)||{}).color;
+const nameOf=id=>id==='impr'?S.impr.name:(S.cats.find(c=>c.id===id)||{name:'(borrada)'}).name;
+const hex=k=>(COLORS[k]||{hex:'#999'}).hex;
+const brick=(color,cls='')=>`<span class="brick ${cls}" style="--c:${hex(color)}" aria-hidden="true"></span>`;
+const monthLabel=m=>{const [y,mo]=m.split('-');return `${MONTHS[+mo-1]} de ${y}`};
+
+/* ---------- Vistas ---------- */
+const V={};
+let lastAdded=null;
+V.mesa=()=>{
+  const R=compute();
+  const sampleBanner=S.sample?`<div class="banner"><p><b>Esto es un ejemplo</b> con el plan de una familia real de 890 € al mes. Pruébalo apuntando un gasto, o empieza el tuyo. Las piezas con punteado blanco han cambiado de color para tapar un hueco.</p>
+    <div class="row"><button type="button" data-act="clearSample">Borrar gastos de ejemplo</button><button class="primary" type="button" data-act="goPlan">Crear mi plan</button></div></div>`:'';
+  const cell=(color,n)=>`<div class="pile">${Array.from({length:n},()=>brick(color)).join('')}</div>`;
+  const head=`<div class="gl"></div>${R.weeks.map(wk=>`<div class="gh ${wk.now?'now':''}">${WEEK_LABEL[wk.w].replace('Semana ','S')}<small>${WEEK_DAYS[wk.w]}</small></div>`).join('')}`;
+  const rows=S.cats.map(c=>`<div class="gl"><span class="dot" style="--c:${hex(c.color)}"></span><span>${esc(c.name)}</span></div>${R.weeks.map(wk=>{const x=wk.cats[c.id];const left=x.left;
+    const other=x.refill.filter(k=>k!==c.color).slice(0,left);
+    const pile=`<div class="pile">${Array.from({length:left-other.length},()=>brick(c.color)).join('')}${other.map(k=>brick(k,'conv')).join('')}</div>`;
+    const lab=wk.closed?(x.moved?`→${x.moved}`:'')+(x.closedLeft?` 🐷${x.closedLeft}`:'')||'0':`${left}/${x.planned}`;
+    return `<div class="gc ${wk.now?'now':''} ${wk.closed?'done':''}" aria-label="${esc(c.name)}, ${WEEK_LABEL[wk.w]}: quedan ${left} de ${x.planned}">${pile}<span class="cnt num">${lab}</span></div>`}).join('')}`).join('');
+  const foot=`<div class="gl"><b>Quedan</b></div>${R.weeks.map(wk=>`<div class="gf num ${wk.now?'now':''}"><b>${wk.closed?(wk.refilledOut?`${wk.refilledOut} a rellenar`:'')+(wk.toHucha?` ${eur(wk.toHucha*S.value)} a la hucha`:'')||'nada sobró':eur(wk.left*S.value)}</b>${wk.red?`<span class="pill bad">${wk.red} en rojo</span>`:wk.deficit?`<span class="pill warn">adelantó ${wk.deficit}</span>`:wk.lentAhead?`<span class="pill warn">${wk.lentAhead} usadas antes</span>`:wk.closed?`<span class="pill good">cerrada</span>`:''}</div>`).join('')}`;
+  const spentRows=S.cats.map(c=>`<div class="gl"><span class="dot" style="--c:${hex(c.color)}"></span><span>${esc(c.name)}</span></div>${R.weeks.map(wk=>{const x=wk.cats[c.id];const n=x.own+x.borrowed;
+    return `<div class="gc ${wk.now?'now':''}" aria-label="${esc(c.name)}, gastado en ${WEEK_LABEL[wk.w]}: ${n} piezas">${n?`<div class="pile">${Array.from({length:n},()=>brick(c.color)).join('')}</div>`:''}<span class="cnt num">${n?eur(x.eur):''}</span></div>`}).join('')}`).join('');
+  const spentFoot=`<div class="gl"><b>Gastado</b></div>${R.weeks.map(wk=>`<div class="gf num ${wk.now?'now':''}"><b>${eur(wk.eur)}</b></div>`).join('')}`;
+  const spentRow=head+spentRows+spentFoot;
+  let imp='';
+  if(S.impr.on){for(let i=0;i<R.imprPlanned-R.imprUsed;i++)imp+=brick(S.impr.color)}
+  let impSpent='';for(let i=0;i<R.imprUsed;i++)impSpent+=brick(S.impr.color);
+  const hucha=R.hucha.map(c=>brick(c)).join('');
+  const recent=S.spends.filter(s=>monthOf(s.date)===S.month).sort((a,b)=>b.date.localeCompare(a.date)).slice(0,12);
+  const pct=R.totalPlanned?Math.round(R.spentMonth/R.totalPlanned*100):0;
+  return `${sampleBanner}
+  <section class="panel">
+    <div class="row between"><div><h2>${monthLabel(S.month)}</h2><p class="muted">Cada pieza vale <b>${eur(S.value)}</b>. Al gastar, la pieza pasa de la base del mes a la base de los gastos, en la columna de esa semana.</p></div>
+      <div class="num" style="text-align:right"><b style="font-size:20px">${eur(R.spentMonth)}</b> <span class="muted">de ${eur(R.totalPlanned)}</span><br><span class="muted">${pct}% del mes</span></div></div>
+    <div class="plate gastado" aria-label="Base de los gastos"><div class="plabel">Base de los gastos</div><div class="grid">${spentRow}</div></div>
+    <div class="plate plan" aria-label="Base del mes"><div class="plabel">Base del mes: lo que queda</div><div class="grid">${head}${rows}${foot}</div></div>
+    <div class="extras">
+      ${S.impr.on?`<div class="plate side"><div class="plabel">${esc(S.impr.name)} · todo el mes</div><div class="pile row">${imp||'<span class="muted">No queda ninguna</span>'}</div><p class="num muted">Quedan ${R.imprPlanned-R.imprUsed} de ${R.imprPlanned}${R.imprUsed?` · gastadas ${R.imprUsed}`:''}</p></div>`:''}
+      <div class="plate side"><div class="plabel">Base de la hucha</div><div class="pile row">${hucha||'<span class="muted">Se llena al cerrar cada semana con lo que sobra</span>'}</div><p class="num"><b>${R.hucha.length} piezas = ${eur(R.hucha.length*S.value)}</b> <span class="muted">ahorrados</span></p></div>
+    </div>
+  </section>
+  ${(()=>{const ws=R.weeks.filter(wk=>wk.closed&&wk.w<3&&(wk.spareFree>0||S.moves.some(m=>m.from===wk.w)));
+    if(!ws.length)return '';
+    return `<section class="panel" style="display:grid;gap:12px"><div><h3>Lo que sobra al cerrar la semana</h3><p class="muted">Primero se rellenan solos los huecos de las semanas siguientes. Lo que sobra después va a la hucha, salvo que decidáis guardarlo de más en un color y una semana porque sabéis que viene un gasto.</p></div>
+    ${ws.map(wk=>{const mv=S.moves.filter(m=>m.from===wk.w);const free=wk.toHucha;
+      return `<div class="banner" style="background:transparent"><div style="display:grid;gap:6px;min-width:0"><b>${WEEK_LABEL[wk.w]}: ${wk.spareFree} piezas sobrantes</b>
+        <span class="muted">${wk.saved?`${wk.saved} guardadas para más adelante · `:''}${free} a la hucha</span>
+        ${mv.map(m=>`<span>${brick(colorOf(m.cat),'sm')} ${m.applied||0} de ${esc(nameOf(m.cat))} para la ${WEEK_LABEL[m.to].toLowerCase()} <button class="link" type="button" data-unmove="${m.id}">Deshacer</button></span>`).join('')}</div>
+        ${free>0?`<div class="row" style="gap:6px"><label class="f">Piezas<input id="mv_n${wk.w}" type="number" min="1" max="${free}" value="${Math.min(2,free)}" style="width:70px"></label>
+          <label class="f">De<select id="mv_cat${wk.w}">${S.cats.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join('')}</select></label>
+          <label class="f">Para<select id="mv_to${wk.w}">${[1,2,3].filter(v=>v>wk.w).map(v=>`<option value="${v}">${WEEK_LABEL[v]}</option>`).join('')}</select></label>
+          <button type="button" data-act="saveMove" data-w="${wk.w}" style="align-self:end">Guardar en vez de a la hucha</button></div>`:''}</div>`}).join('')}</section>`})()}
+  <section class="panel"><h3>Colores</h3><div class="legend" style="margin-top:10px">${S.cats.map(c=>`<div class="leg">${brick(c.color)}<div style="min-width:0"><b>${esc(c.name)}</b><small>${esc(c.desc||'')}</small></div></div>`).join('')}${S.impr.on?`<div class="leg">${brick(S.impr.color)}<div><b>${esc(S.impr.name)}</b><small>Montón aparte para todo el mes</small></div></div>`:''}</div></section>
+  <section class="panel"><div class="row between"><h3>Últimos gastos</h3>${R.cur===4?'<button class="primary" type="button" data-act="newMonth">Empezar mes nuevo</button>':'<button type="button" data-act="newMonth">Empezar mes nuevo</button>'}</div>
+    <div id="nmConfirm"></div>
+    <div class="list" style="margin-top:8px">${recent.length?recent.map(s=>`<div class="item"><span class="dot" style="--c:${hex(colorOf(s.cat))}"></span>
+      <div style="min-width:0"><b>${esc(nameOf(s.cat))}</b> <span class="muted">${+s.date.slice(8)} ${MONTHS[+s.date.slice(5,7)-1].slice(0,3)}${s.note?' · '+esc(s.note):''}</span></div>
+      <span class="num"><b>${eur(s.amount)}</b> <span class="muted">· ${Math.round(s.amount/S.value)} pz</span></span>
+      <button class="link danger" type="button" data-del="${s.id}" aria-label="Borrar gasto">Borrar</button></div>`).join(''):'<p class="muted">Aún no hay gastos este mes. Pulsa «Apuntar gasto» cuando pagues algo.</p>'}</div>
+  </section>`;
+};
+
+V.plan=()=>{
+  const rows=S.cats.map((c,i)=>{const n=bricksFor(c.amount),sp=split(n);
+    return `<tr>
+      <td><button class="sw" type="button" style="--c:${hex(c.color)}" data-color="${i}" aria-label="Cambiar color de ${esc(c.name)}"></button></td>
+      <td><input id="n${c.id}" data-f="name" data-i="${i}" value="${esc(c.name)}" style="width:130px"><br><input id="d${c.id}" data-f="desc" data-i="${i}" value="${esc(c.desc||'')}" placeholder="Qué entra aquí" style="width:180px;margin-top:4px;font-size:14px"></td>
+      <td class="r"><input id="a${c.id}" type="number" min="0" step="5" data-f="amount" data-i="${i}" value="${c.amount}"> €</td>
+      <td class="r num"><b>${n}</b></td>
+      <td class="num muted">${sp.join(' · ')}</td>
+      <td><button class="link danger" type="button" data-rmcat="${i}">Quitar</button></td></tr>
+      <tr id="pick${i}" hidden><td colspan="6"><div class="swatches">${Object.keys(COLORS).map(k=>`<button class="sw" type="button" style="--c:${COLORS[k].hex}" data-setcolor="${i}" data-k="${k}" aria-pressed="${k===c.color}" aria-label="${COLORS[k].name}"></button>`).join('')}</div></td></tr>`}).join('');
+  const tot=S.cats.reduce((a,c)=>a+c.amount,0), totB=S.cats.reduce((a,c)=>a+bricksFor(c.amount),0);
+  const used=new Set(S.cats.map(c=>c.color)); const dup=S.cats.length!==used.size||(S.impr.on&&used.has(S.impr.color));
+  return `<section class="panel" style="display:grid;gap:14px">
+    <div><h2>Mi plan del mes</h2><p class="muted">Poned solo el gasto del día a día que se paga en tienda, con tarjeta o en efectivo. Lo que se cobra solo del banco (hipoteca, luz, seguros) no va en la mesa.</p></div>
+    <div class="row">
+      <label class="f">Nombre de la casa<input id="fam_in" data-g="family" value="${esc(S.family)}" style="width:240px"></label>
+      <label class="f">Cada pieza vale<select id="val_in" data-g="value">${[5,10,20,25,50].map(v=>`<option value="${v}" ${v===S.value?'selected':''}>${v} €</option>`).join('')}</select></label>
+    </div>
+    <div class="tw"><table>
+      <thead><tr><th>Color</th><th>Cosa</th><th class="r">Al mes</th><th class="r">Piezas</th><th>Por semana</th><th></th></tr></thead>
+      <tbody>${rows}</tbody>
+      <tfoot><tr><td></td><td>Semanas</td><td class="r num">${eur(tot)}</td><td class="r num">${totB}</td><td class="muted num">${[0,1,2,3].map(w=>S.cats.reduce((a,c)=>a+split(bricksFor(c.amount))[w],0)).join(' · ')}</td><td></td></tr></tfoot>
+    </table></div>
+    ${dup?'<p class="pill warn">Dos cosas usan el mismo color: en la mesa no podréis distinguirlas.</p>':''}
+    <div class="row"><button type="button" data-act="addCat">+ Añadir color</button></div>
+    <div class="banner" style="background:transparent">
+      <label class="row" style="gap:8px;font-weight:700"><input id="impr_on" type="checkbox" data-g="imprOn" ${S.impr.on?'checked':''}> Montón de imprevistos para todo el mes</label>
+      ${S.impr.on?`<label class="row" style="gap:6px"><input id="impr_amt" type="number" min="0" step="10" data-g="imprAmt" value="${S.impr.amount}"> € = <b class="num">${bricksFor(S.impr.amount)} piezas</b></label>`:''}
+    </div>
+    <p><b>Total del mes: ${eur(tot+(S.impr.on?S.impr.amount:0))}</b> <span class="muted">· necesitáis ${totB+(S.impr.on?bricksFor(S.impr.amount):0)} piezas. Mirad «Las piezas» para saber cuántas de cada color.</span></p>
+  </section>
+  ${S.history.length?`<section class="panel"><h3>Meses anteriores</h3><div class="tw"><table style="margin-top:8px"><thead><tr><th>Mes</th><th class="r">Plan</th><th class="r">Gastado</th><th class="r">Hucha</th></tr></thead><tbody>${S.history.map(h=>`<tr><td>${monthLabel(h.month)}</td><td class="r">${eur(h.planned)}</td><td class="r">${eur(h.spent)}</td><td class="r"><b>${eur(h.hucha)}</b></td></tr>`).join('')}</tbody></table></div></section>`:''}`;
+};
+
+V.hoja=()=>{
+  const rows=S.cats.map(c=>{const sp=split(bricksFor(c.amount));return `<tr><th>${brick(c.color)} ${esc(c.name)}</th>${sp.map(n=>`<td>${Array.from({length:n},()=>brick(c.color,'sm')).join('')} <b>${n}</b></td>`).join('')}</tr>`}).join('');
+  const tw=[0,1,2,3].map(w=>S.cats.reduce((a,c)=>a+split(bricksFor(c.amount))[w],0));
+  const imp=S.impr.on?bricksFor(S.impr.amount):0;
+  return `<section class="panel sheet-print" style="display:grid;gap:14px">
+    <div><h2>${esc(S.family)}: nuestras piezas del mes</h2><p class="muted">Para la nevera. Cada pieza vale <b>${eur(S.value)}</b>; cada color es una cosa en la que gastamos. Cada color tiene una fila y cada semana una columna. Al gastar, pasamos la pieza a la base de los gastos, a la columna de esa semana.</p></div>
+    <div class="tw"><table><thead><tr><th>Color</th>${WEEK_LABEL.map((l,i)=>`<th>${l}<br><small>${WEEK_DAYS[i]}</small></th>`).join('')}</tr></thead>
+      <tbody>${rows}</tbody><tfoot><tr><td>Total semana</td>${tw.map(t=>`<td class="num">${t} piezas = ${eur(t*S.value)}</td>`).join('')}</tr></tfoot></table></div>
+    ${S.impr.on?`<div class="banner" style="background:transparent"><p><b>Aparte, un montón de ${imp} piezas de ${esc(S.impr.name.toLowerCase())}</b> (${eur(imp*S.value)}) para todo el mes. Solo se usa si pasa algo que no esperábamos.</p><div>${Array.from({length:imp},()=>brick(S.impr.color,'sm')).join('')}</div></div>`:''}
+    <h3>Las reglas</h3>
+    <ol class="rules">
+      <li><b>El día 1 montamos la base del mes</b> con las piezas de la tabla: una fila por color y una columna por semana. Al lado, vacías, la <b>base de los gastos</b> y la <b>base de la hucha</b>.</li>
+      <li><b>Cuando alguien de casa paga algo, pasamos piezas de ese color</b> de la columna de esa semana a la base de los gastos. Se redondea: ${eur(S.value*2.3)} son 2 piezas; ${eur(S.value*2.7)} son 3.</li>
+      <li><b>Si se acaban las piezas de un color</b> en una semana, se cogen <b>del mismo color de las semanas siguientes</b>. Esas semanas tendrán menos: es la consecuencia de adelantarlas.</li>
+      <li><b>Al terminar la semana, las piezas que sobran se mueven</b>, no se quedan ahí. Primero rellenan los huecos <b>del mismo color</b> en las semanas siguientes. Si ese color ya está completo, la pieza <b>cambia de color</b> y rellena el hueco de otro (solo los que falten, nunca de más). Lo que quede después va a la <b>hucha</b>, o se puede <b>guardar de más</b> en un color de una semana siguiente si sabemos que viene un gasto. Así no se puede ahorrar comida que hemos cogido de semanas siguientes.</li>
+      <li>Lo que se paga solo desde el banco (la casa, la luz, los seguros…) <b>no va en la mesa</b>.</li>
+      <li>A fin de mes, en la base de la hucha veis cuánto habéis ahorrado: cada pieza son ${eur(S.value)}.</li>
+    </ol>
+    <p class="muted">Para imprimirla, usa «Imprimir» de tu navegador en esta pestaña, o haz una captura de pantalla.</p>
+  </section>`;
+};
+
+V.kit=()=>{
+  const need={};
+  for(const c of S.cats)need[c.color]=(need[c.color]||0)+bricksFor(c.amount);
+  if(S.impr.on)need[S.impr.color]=(need[S.impr.color]||0)+bricksFor(S.impr.amount);
+  const tot=Object.values(need).reduce((a,b)=>a+b,0);
+  const P=S.spareP/100, ext=n=>Math.ceil(n*P);
+  return `<section class="panel" style="display:grid;gap:12px">
+    <div><h2>Las piezas que necesitáis</h2><p class="muted">Con vuestro plan hacen falta <b>${tot} piezas</b>. Las de la hucha se vuelven a usar el mes siguiente, así que se compran una sola vez.</p></div>
+    <div class="row"><span><b>Repuesto</b> <span class="muted">(las piezas que cambian de color o se guardan para otra semana hacen que un color necesite más de lo planeado)</span></span>
+      <div class="row" style="gap:6px" role="group" aria-label="Repuesto">${[20,30].map(v=>`<button type="button" data-spare="${v}" class="${S.spareP===v?'primary':''}" aria-pressed="${S.spareP===v}">${v}%</button>`).join('')}</div></div>
+    <div class="tw"><table><thead><tr><th>Color</th><th class="r">Piezas</th><th class="r">Con ${S.spareP}% de repuesto</th></tr></thead><tbody>
+      ${Object.entries(need).map(([k,n])=>`<tr><td>${brick(k)} ${COLORS[k].name}</td><td class="r num">${n}</td><td class="r num"><b>${n+ext(n)}</b></td></tr>`).join('')}
+    </tbody><tfoot><tr><td>Total</td><td class="r num">${tot}</td><td class="r num">${tot+Object.values(need).reduce((a,n)=>a+ext(n),0)}</td></tr></tfoot></table></div>
+  </section>
+  <div class="kit">
+    <section class="panel" style="display:grid;gap:10px">
+      <h3>Opción 1: con las piezas que ya tenéis</h3>
+      <p>Si en casa hay piezas de construcción, buscad las de <b>2×4</b> (o todas de 2×2) en los colores de la tabla. Lo importante es que todas sean <b>del mismo tamaño</b>: así una pieza siempre vale lo mismo y el montón de cada hueco se lee de un vistazo.</p>
+      <p class="muted">Si os falta un color, cambiadlo en «Mi plan» por uno que sí tengáis.</p>
+      <p>Hacen falta tres bases: la del mes (filas de colores, columnas de semanas), la de los gastos y la de la hucha. Valen placas de construcción o un cartón con las casillas dibujadas.</p>
+    </section>
+    <section class="panel" style="display:grid;gap:10px">
+      <div class="row between"><h3>Opción 2: el kit Piezas del mes</h3><span class="pill warn">Prototipo, aún no a la venta</span></div>
+      <p class="price">29 €</p>
+      <ul style="margin:0;padding-left:20px;display:grid;gap:4px">
+        <li>120 piezas 2×4 compatibles en 6 colores (verde, amarillo, rojo, blanco, azul, marrón)</li>
+        <li>Tres bases: la del mes con filas de colores y columnas de semana marcadas, la de los gastos y la de la hucha</li>
+        <li>Pegatinas para marcar el valor de la pieza (5, 10 o 20 €) y el nombre de cada color</li>
+        <li>Hoja de reglas para la nevera y código QR a esta app</li>
+        <li>Caja que sirve de hucha para guardar las piezas ahorradas</li>
+      </ul>
+      <p class="muted">Llega para un presupuesto de hasta 1.200 € al mes con piezas de 10 €.</p>
+    </section>
+  </div>`;
+};
+
+V.como=()=>`<section class="panel" style="display:grid;gap:14px">
+  <h2>Cómo funciona</h2>
+  <p>Piezas del mes convierte el dinero del día a día en piezas de colores que se ven y se tocan. Está pensado para casas con niños: ellos ven cómo se vacía la base del mes cuando se gasta y cómo crece la hucha cuando se ahorra.</p>
+  <ol class="steps">
+    <li><div><b>Haced el plan</b><p class="muted">En «Mi plan», poned cuánto gastáis al mes en cada cosa (comida, ocio, gasolina…) y cuánto vale una pieza. La app calcula cuántas piezas lleva cada color cada semana.</p></div></li>
+    <li><div><b>Montad la mesa</b><p class="muted">El día 1, poned en la base del mes las piezas de la «Hoja de reglas»: una fila por color y una columna por semana. Al lado, vacías, la base de los gastos y la base de la hucha.</p></div></li>
+    <li><div><b>Al pagar, la pieza pasa atrás</b><p class="muted">Cuando alguien de casa pague algo, apuntadlo aquí y pasad las piezas que diga la app de la columna de esa semana a la base de los gastos. Si se acaba un color, se coge <b>del mismo color de las semanas siguientes</b>, que tendrán menos. Si ya no queda de ese color, la semana se queda en rojo: el montón de imprevistos es solo para imprevistos.</p></div></li>
+    <li><div><b>Al cerrar la semana, lo que sobra se mueve</b><p class="muted">Primero tapa los huecos de las semanas siguientes: del mismo color y, si ya están llenos, cambiando de color, solo los que falten. Lo que quede va a la hucha, o lo guardáis de más en un color y una semana en la que sabéis que viene un gasto. La app lo calcula sola. A fin de mes, en la base de la hucha veis cuánto habéis ahorrado.</p></div></li>
+  </ol>
+  <p class="muted">Vuestros datos se guardan solo en este navegador. Nadie más los ve.</p>
+  <div class="row"><button type="button" data-act="reset" class="danger">Volver a empezar con el ejemplo</button></div><div id="resetConfirm"></div>
+</section>`;
+
+/* ---------- Ventana de gasto ---------- */
+let draft=null;
+function openSpend(){
+  const today=todayISO();
+  const def=S.month===monthOf(today)?today:`${S.month}-01`;
+  draft={cat:S.cats[0]?.id,amount:'',date:def,note:''};
+  renderModal();
+  setTimeout(()=>document.getElementById('sp_amt')?.focus(),30);
+}
+function renderModal(){
+  const m=document.getElementById('modal');
+  if(!draft){m.innerHTML='';return}
+  const opts=[...S.cats.map(c=>({id:c.id,name:c.name,color:c.color})),...(S.impr.on?[{id:'impr',name:S.impr.name,color:S.impr.color}]:[])];
+  const a=parseFloat(String(draft.amount).replace(',','.'))||0, n=Math.round(a/S.value);
+  const wk=WEEK_LABEL[weekOfDay(+draft.date.slice(8)||1)];
+  m.innerHTML=`<div class="overlay" data-close="1"><form class="sheet" id="spForm" aria-label="Apuntar gasto">
+    <div class="row between"><h2>Apuntar gasto</h2><button type="button" class="link" data-close="1">Cerrar</button></div>
+    <label class="f">¿Cuánto?<span class="row" style="gap:6px"><input id="sp_amt" inputmode="decimal" value="${esc(draft.amount)}" placeholder="0,00" style="width:140px;font-size:22px"> €</span></label>
+    <div class="f" role="group" aria-label="¿En qué?"><span>¿En qué?</span><div class="catpick">${opts.map(o=>`<button type="button" data-pick="${o.id}" aria-pressed="${o.id===draft.cat}"><span class="dot" style="--c:${hex(o.color)}"></span>${esc(o.name)}</button>`).join('')}</div></div>
+    <div class="row"><label class="f">Día<input id="sp_date" type="date" value="${draft.date}" min="${S.month}-01" max="${S.month}-${pad(daysInMonth(S.month))}"></label>
+      <label class="f" style="flex:1">Nota (opcional)<input id="sp_note" value="${esc(draft.note)}" placeholder="Ej.: Mercadona"></label></div>
+    <p class="preview" id="sp_prev">${a>0?`Quita <b>${n} ${n===1?'pieza':'piezas'}</b> ${draft.cat==='impr'?'del montón de imprevistos':`de la <b>${wk.toLowerCase()}</b> a la base de los gastos`}.${n===0?' <span class="muted">Es menos de media pieza: se suma a los siguientes gastos de este color.</span>':''}`:'<span class="muted">Escribe el importe para ver cuántas piezas quitar.</span>'}</p>
+    <button class="primary big" type="submit" ${a>0&&draft.cat?'':'disabled'}>Apuntar</button>
+  </form></div>`;
+}
+document.getElementById('modal').addEventListener('input',e=>{
+  if(!draft)return;
+  if(e.target.id==='sp_amt'){draft.amount=e.target.value;const pos=e.target.selectionStart;renderModal();const el=document.getElementById('sp_amt');el.focus();try{el.setSelectionRange(pos,pos)}catch(_){}}
+  if(e.target.id==='sp_note')draft.note=e.target.value;
+  if(e.target.id==='sp_date'&&e.target.value){draft.date=e.target.value;renderModal()}
+});
+document.getElementById('modal').addEventListener('click',e=>{
+  const p=e.target.closest('[data-pick]'); if(p){draft.cat=p.dataset.pick;renderModal();return}
+  if(e.target.dataset.close){draft=null;renderModal()}
+});
+document.getElementById('modal').addEventListener('submit',e=>{
+  e.preventDefault();
+  const a=Math.round((parseFloat(String(draft.amount).replace(',','.'))||0)*100)/100;
+  if(a<=0)return;
+  S.spends.push({id:uid(),date:draft.date,cat:draft.cat,amount:a,note:draft.note.trim()});
+  S.sample=false;
+  save(); const n=Math.round(a/S.value); draft=null; renderModal();
+  toast(`Apuntado: quita ${n} ${n===1?'pieza':'piezas'}`);
+  if(route()!=='mesa')location.hash='mesa'; else render();
+});
+document.getElementById('addBtn').addEventListener('click',openSpend);
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&draft){draft=null;renderModal()}});
+
+let tt;function toast(t){const el=document.getElementById('toast');el.textContent=t;el.hidden=false;clearTimeout(tt);tt=setTimeout(()=>el.hidden=true,2600)}
+
+/* ---------- Acciones de las vistas ---------- */
+const view=document.getElementById('view');
+view.addEventListener('click',e=>{
+  const t=e.target.closest('button'); if(!t)return;
+  const act=t.dataset.act;
+  if(t.dataset.del){S.spends=S.spends.filter(s=>s.id!==t.dataset.del);save();render();return}
+  if(act==='clearSample'){S.spends=[];S.sample=false;save();render();toast('Gastos de ejemplo borrados');return}
+  if(act==='goPlan'){S.sample=false;S.family='Nuestra casa';S.spends=[];save();location.hash='plan';return}
+  if(act==='newMonth'){
+    const R=compute();
+    document.getElementById('nmConfirm').innerHTML=`<div class="banner" style="margin-top:10px"><p>Se guarda el resumen de ${monthLabel(S.month)} y se vuelve a montar la mesa. Las piezas que queden pasan a la hucha (${eur((R.hucha.length+R.weeks.filter(w=>!w.closed).reduce((a,w)=>a+w.left,0))*S.value)}).</p><div class="row"><button type="button" data-act="nmNo">Cancelar</button><button class="primary" type="button" data-act="nmYes">Empezar mes nuevo</button></div></div>`;return}
+  if(act==='nmNo'){document.getElementById('nmConfirm').innerHTML='';return}
+  if(act==='nmYes'){
+    const R=compute(); const left=R.hucha.length+R.weeks.filter(w=>!w.closed).reduce((a,w)=>a+w.left,0);
+    S.history.unshift({month:S.month,planned:R.totalPlanned,spent:Math.round(R.spentMonth*100)/100,hucha:left*S.value});
+    const [y,mo]=S.month.split('-').map(Number); const nm=mo===12?`${y+1}-01`:`${y}-${pad(mo+1)}`;
+    const tm=monthOf(todayISO()); S.month=nm>tm?nm:tm; S.spends=S.spends.filter(s=>monthOf(s.date)>=S.month); S.moves=[]; S.sample=false; save(); render(); toast('Mesa montada para '+monthLabel(S.month)); return}
+  if(act==='addCat'){const free=Object.keys(COLORS).find(k=>!S.cats.some(c=>c.color===k)&&k!==S.impr.color)||'negro';S.cats.push({id:uid(),name:'Nuevo',desc:'',color:free,amount:50});save();render();return}
+  if(t.dataset.rmcat!=null){S.cats.splice(+t.dataset.rmcat,1);save();render();return}
+  if(t.dataset.color!=null){const r=document.getElementById('pick'+t.dataset.color);r.hidden=!r.hidden;return}
+  if(t.dataset.setcolor!=null){S.cats[+t.dataset.setcolor].color=t.dataset.k;save();render();return}
+  if(t.dataset.spare){S.spareP=+t.dataset.spare;save();render();return}
+  if(act==='saveMove'){const w=+t.dataset.w;const n=Math.max(1,+document.getElementById('mv_n'+w).value||0);
+    S.moves.push({id:uid(),from:w,to:+document.getElementById('mv_to'+w).value,cat:document.getElementById('mv_cat'+w).value,n});save();render();toast('Guardadas para más adelante');return}
+  if(t.dataset.unmove){S.moves=S.moves.filter(m=>m.id!==t.dataset.unmove);save();render();return}
+  if(act==='reset'){document.getElementById('resetConfirm').innerHTML=`<div class="banner"><p>Se borra vuestro plan y vuestros gastos de este navegador.</p><div class="row"><button type="button" data-act="rsNo">Cancelar</button><button class="primary" type="button" data-act="rsYes">Borrar y ver el ejemplo</button></div></div>`;return}
+  if(act==='rsNo'){document.getElementById('resetConfirm').innerHTML='';return}
+  if(act==='rsYes'){S=sampleState();save();location.hash='mesa';render();return}
+});
+view.addEventListener('change',e=>{
+  const t=e.target;
+  if(t.dataset.f){const c=S.cats[+t.dataset.i]; if(t.dataset.f==='amount')c.amount=Math.max(0,+t.value||0); else c[t.dataset.f]=t.value; save(); if(t.dataset.f==='amount')render(); else renderHead(); return}
+  if(t.dataset.g==='family'){S.family=t.value;save();renderHead()}
+  if(t.dataset.g==='value'){S.value=+t.value;save();render()}
+  if(t.dataset.g==='imprOn'){S.impr.on=t.checked;save();render()}
+  if(t.dataset.g==='imprAmt'){S.impr.amount=Math.max(0,+t.value||0);save();render()}
+});
+
+/* ---------- Rutas ---------- */
+const ROUTES=['mesa','plan','hoja','kit','como'];
+const route=()=>{const h=location.hash.slice(1);return ROUTES.includes(h)?h:'mesa'};
+function renderHead(){document.getElementById('fam').textContent=`${S.family} · ${monthLabel(S.month)}`}
+function render(){
+  const r=route();
+  document.querySelectorAll('nav.tabs a').forEach(a=>a.setAttribute('aria-current',a.getAttribute('href')==='#'+r?'page':'false'));
+  view.innerHTML=V[r](); renderHead();
+}
+window.addEventListener('hashchange',()=>{render();window.scrollTo(0,0)});
+render();
+</script>
+
+<script>if("serviceWorker" in navigator&&location.protocol.startsWith("http"))navigator.serviceWorker.register("sw.js").catch(()=>{});</script>
+</body>
+</html>

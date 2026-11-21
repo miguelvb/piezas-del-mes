@@ -136,9 +136,8 @@ c8 = full(); c8.update({(r, 0): 0 for r in range(5)}); c8[(2, 2)] = 4
 page(f'''<p class="eye">REGLA 3 · CADA DOMINGO</p><h1>Al cerrar la semana, lo que sobra se mueve</h1>
 <p>Lo que queda en la columna de la semana no se puede quedar ahí. Se mueve siempre, en este orden:</p>
 <ol><li><b>Rellena los colores que tienen menos de lo que les toca</b> en las semanas siguientes (los huecos que dejó la regla 2). La pieza cambia de color si hace falta.</li>
-<li><b>Si aún sobra y sabes que viene un gasto</b> (un cumpleaños, un viaje), déjalo de más en esa semana, en su color o en el de ese gasto.</li>
-<li><b>Lo que queda va a la hucha.</b></li></ol>
-{board(c8, marks=[(1, 1, '#237841'), (2, 2, '#C9668F')], caption='Semana 1 cerrada. La semana 2 tenía un hueco de 3 rojas (regla 2): 2 verdes y 1 amarilla que sobraban se convierten en rojas y lo rellenan. El sábado de la semana 3 hay un cumpleaños: 2 blancas se guardan como amarillas. El resto fue a la hucha.')}
+<li><b>Si aún sobra, repártelo como quieras</b> en las semanas siguientes, en su color o en otro (por ejemplo, para un cumpleaños o un viaje), <b>o llévalo a la hucha.</b></li></ol>
+{board(c8, marks=[(1, 1, '#237841'), (2, 2, '#C9668F')], caption='Semana 1 cerrada. La semana 2 tenía un hueco de 3 rojas (regla 2): 2 verdes y 1 amarilla que sobraban se convierten en rojas y lo rellenan. Lo que aún sobraba, a elección: 2 blancas se guardan como amarillas para un cumpleaños en la semana 3 y el resto va a la hucha.')}
 <p class="cap">Los grises oscuros que sobran el domingo se quedan para imprevistos. A fin de mes, los que no hayas usado se pueden ahorrar o pasar al mes siguiente.</p>''', 8)
 
 # 9 · fin de mes
@@ -193,9 +192,8 @@ page(f'''<p class="eye">SIN PANTALLAS · 3</p><h1>El domingo, con lápiz</h1>
 <table class="t sm"><tr class="h"><td>COLOR</td><td>PLAN</td><td>GASTADO</td><td>SOBRA</td></tr>{r12}
 <tr class="tot"><td>Total</td><td></td><td></td><td>7</td></tr></table>
 <ol><li><b>¿Algún color tiene menos de lo que le toca?</b> El rojo de la semana 2: le faltan 3. 2 verdes + 1 amarilla se convierten en 3 rojas y van a la semana 2.</li>
-<li><b>¿Viene un gasto?</b> El sábado de la semana 3 hay un cumpleaños: las 2 blancas se guardan como amarillas en la semana 3.</li>
-<li><b>Lo que queda:</b> 2 azules = 2 piezas = <b>20 € a la hucha</b>.</li></ol>
-<p class="cs">Si no hubiera ningún gasto a la vista, las 2 blancas también irían a la hucha: 40 €.</p></div>''', 12)
+<li><b>Lo que aún sobra, como quieras:</b> el sábado de la semana 3 hay un cumpleaños, así que las 2 blancas se guardan como amarillas en la semana 3, y las 2 azules van a la hucha: <b>20 €</b>.</li></ol>
+<p class="cs">Si lo llevas todo a la hucha, son 4 piezas: 40 €.</p></div>''', 12)
 
 # 13 · cuentas fin de mes
 t13 = [('Verde', '28', '24', '+4'), ('Rojo', '12', '14', '−2'), ('Amarillo', '8', '7', '+1'), ('Azul', '12', '8', '+4'), ('Blanco', '8', '4', '+4'), ('Gris oscuro', '15', '6', '+9')]
@@ -235,7 +233,7 @@ page(f'''<div class="rh"><div class="ri">{SYM}</div><h1>Las reglas, en corto</h1
 <li><b>Al pagar:</b> se apunta y la pieza cambia a la base de los gastos, en su semana. Se redondea; lo de menos de 5 €, a «sueltos».</li>
 <li><b>Si se acaba un color:</b> se coge del mismo color de otra semana, normalmente la siguiente. Si no queda, la semana se queda en rojo.</li>
 <li><b>Imprevistos:</b> solo para imprevistos, en un montón o por semanas.</li>
-<li><b>Cada domingo:</b> lo que sobra rellena primero los colores que tienen menos de lo que les toca; si aún sobra y viene un gasto, se guarda de más; el resto, a la hucha.</li>
+<li><b>Cada domingo:</b> lo que sobra rellena primero los colores que tienen menos de lo que les toca; si aún sobra, se reparte como quieras o va a la hucha.</li>
 <li><b>Fin de mes:</b> mira la hucha, decide qué hacer con los imprevistos que sobran y haz el plan siguiente.</li></ol>
 <p class="legal">Piezas del mes · prototipo de arkinos.net · Usa piezas de construcción compatibles; no tiene relación con ninguna marca de juguetes. Contiene piezas pequeñas: no apto para menores de 3 años.</p>''', 16)
 

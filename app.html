@@ -201,7 +201,7 @@ tfoot td{font-weight:700}
 <script>
 const COLORS={
   verde:{hex:'#237841',name:'Verde'}, amarillo:{hex:'#f2cd37',name:'Amarillo'}, rojo:{hex:'#c91a09',name:'Rojo'},
-  blanco:{hex:'#f4f4f4',name:'Blanco'}, azul:{hex:'#0055bf',name:'Azul'}, marron:{hex:'#7c5034',name:'Marrón'},
+  blanco:{hex:'#f4f4f4',name:'Blanco'}, azul:{hex:'#0055bf',name:'Azul'}, gris:{hex:'#3a3b3f',name:'Gris oscuro'}, marron:{hex:'#7c5034',name:'Marrón'},
   naranja:{hex:'#d67923',name:'Naranja'}, negro:{hex:'#2a2a2a',name:'Negro'}, rosa:{hex:'#e4adc8',name:'Rosa'},
   lila:{hex:'#8a5ab8',name:'Lila'}, celeste:{hex:'#6fb6e6',name:'Celeste'}, lima:{hex:'#a5ca18',name:'Lima'}
 };
@@ -217,7 +217,7 @@ const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',
 function sampleState(){
   const m=monthOf(todayISO());
   return {
-    sample:true, family:'Ejemplo: una familia con dos niñas', value:10, month:m,
+    sample:true, family:'Ejemplo de plan', value:10, month:m,
     cats:[
       {id:'comida',name:'Comida',desc:'El súper: Mas, Lidl, Aldi',color:'verde',amount:300},
       {id:'gasolina',name:'Gasolina',desc:'El coche y la moto',color:'rojo',amount:110},
@@ -225,7 +225,7 @@ function sampleState(){
       {id:'bolsillo',name:'Bolsillo',desc:'Dinero suelto en efectivo',color:'blanco',amount:100},
       {id:'hogar',name:'Hogar',desc:'Cosas de casa, farmacia, médico',color:'azul',amount:150}
     ],
-    impr:{on:true,amount:150,color:'marron',name:'Imprevistos',desc:'Lo que no esperábamos (taller…)'},
+    impr:{on:true,amount:150,color:'gris',name:'Imprevistos',desc:'Lo que no esperábamos (taller…)'},
     spends:[
       {id:uid(),date:`${m}-02`,cat:'comida',amount:38.5,note:'Compra grande'},
       {id:uid(),date:`${m}-03`,cat:'gasolina',amount:28,note:'Media de depósito'},
@@ -295,7 +295,7 @@ function compute(){
     const give=(from,v,id)=>{weeks[v].cats[id].refill.push(colorOf(from));spare[from]--;wk.cats[from].moved=(wk.cats[from].moved||0)+1;wk.refilledOut++};
     for(const c of S.cats)for(let v=w+1;v<W;v++)while(spare[c.id]>0&&gap(v,c.id)>0)give(c.id,v,c.id);
     for(let v=w+1;v<W;v++)for(const c of S.cats)while(gap(v,c.id)>0){const from=S.cats.find(o=>spare[o.id]>0);if(!from)break;give(from.id,v,c.id)}
-    // Decisión de la familia: en vez de a la hucha, guardar piezas de más para una semana que sabemos que viene cara
+    // Decisión de cada uno: lo que aún sobra se reparte como se quiera en las semanas siguientes, o va a la hucha
     wk.spareFree=S.cats.reduce((a,c)=>a+spare[c.id],0); wk.saved=0;
     for(const m of S.moves.filter(m=>m.from===w&&m.to>w&&m.to<W&&weeks[m.to].cats[m.cat])){
       let n=m.n; m.applied=0;
@@ -326,7 +326,7 @@ const V={};
 let lastAdded=null;
 V.mesa=()=>{
   const R=compute();
-  const sampleBanner=S.sample?`<div class="banner"><p><b>Esto es un ejemplo</b> con el plan de una familia real de 890 € al mes. Pruébalo apuntando un gasto, o empieza el tuyo. Las piezas con punteado blanco han cambiado de color para tapar un hueco.</p>
+  const sampleBanner=S.sample?`<div class="banner"><p><b>Esto es un plan de ejemplo</b> de 890 € al mes. Pruébalo apuntando un gasto, o empieza el tuyo. Las piezas con punteado blanco han cambiado de color para rellenar un color que tenía menos de lo que le toca.</p>
     <div class="row"><button type="button" data-act="clearSample">Borrar gastos de ejemplo</button><button class="primary" type="button" data-act="goPlan">Crear mi plan</button></div></div>`:'';
   const cell=(color,n)=>`<div class="pile">${Array.from({length:n},()=>brick(color)).join('')}</div>`;
   const head=`<div class="gl"></div>${R.weeks.map(wk=>`<div class="gh ${wk.now?'now':''}">${WEEK_LABEL[wk.w].replace('Semana ','S')}<small>${WEEK_DAYS[wk.w]}</small></div>`).join('')}`;
@@ -359,7 +359,7 @@ V.mesa=()=>{
   </section>
   ${(()=>{const ws=R.weeks.filter(wk=>wk.closed&&wk.w<3&&(wk.spareFree>0||S.moves.some(m=>m.from===wk.w)));
     if(!ws.length)return '';
-    return `<section class="panel" style="display:grid;gap:12px"><div><h3>Lo que sobra al cerrar la semana</h3><p class="muted">Primero se rellenan solos los huecos de las semanas siguientes. Lo que sobra después va a la hucha, salvo que decidáis guardarlo de más en un color y una semana porque sabéis que viene un gasto.</p></div>
+    return `<section class="panel" style="display:grid;gap:12px"><div><h3>Lo que sobra al cerrar la semana</h3><p class="muted">Primero se rellenan solos los colores de las semanas siguientes que tienen menos de lo que les toca (cambiando de color si hace falta). Si aún sobra, repartidlo como queráis en las semanas siguientes, o llevadlo a la hucha.</p></div>
     ${ws.map(wk=>{const mv=S.moves.filter(m=>m.from===wk.w);const free=wk.toHucha;
       return `<div class="banner" style="background:transparent"><div style="display:grid;gap:6px;min-width:0"><b>${WEEK_LABEL[wk.w]}: ${wk.spareFree} piezas sobrantes</b>
         <span class="muted">${wk.saved?`${wk.saved} guardadas para más adelante · `:''}${free} a la hucha</span>
@@ -391,7 +391,7 @@ V.plan=()=>{
   const tot=S.cats.reduce((a,c)=>a+c.amount,0), totB=S.cats.reduce((a,c)=>a+bricksFor(c.amount),0);
   const used=new Set(S.cats.map(c=>c.color)); const dup=S.cats.length!==used.size||(S.impr.on&&used.has(S.impr.color));
   return `<section class="panel" style="display:grid;gap:14px">
-    <div><h2>Mi plan del mes</h2><p class="muted">Poned solo el gasto del día a día que se paga en tienda, con tarjeta o en efectivo. Lo que se cobra solo del banco (hipoteca, luz, seguros) no va en la mesa.</p></div>
+    <div><h2>Mi plan del mes</h2><p class="muted">Poned solo los gastos no fijos: lo que queda para el mes una vez descontados los gastos fijos (alquiler o hipoteca, luz, seguros…). Los fijos no van en la mesa.</p></div>
     <div class="row">
       <label class="f">Nombre de la casa<input id="fam_in" data-g="family" value="${esc(S.family)}" style="width:240px"></label>
       <label class="f">Cada pieza vale<select id="val_in" data-g="value">${[5,10,20,25,50].map(v=>`<option value="${v}" ${v===S.value?'selected':''}>${v} €</option>`).join('')}</select></label>
@@ -417,18 +417,18 @@ V.hoja=()=>{
   const tw=[0,1,2,3].map(w=>S.cats.reduce((a,c)=>a+split(bricksFor(c.amount))[w],0));
   const imp=S.impr.on?bricksFor(S.impr.amount):0;
   return `<section class="panel sheet-print" style="display:grid;gap:14px">
-    <div><h2>${esc(S.family)}: nuestras piezas del mes</h2><p class="muted">Para la nevera. Cada pieza vale <b>${eur(S.value)}</b>; cada color es una cosa en la que gastamos. Cada color tiene una fila y cada semana una columna. Al gastar, pasamos la pieza a la base de los gastos, a la columna de esa semana.</p></div>
+    <div><h2>${esc(S.family)}: nuestras piezas del mes</h2><p class="muted">Para la nevera. Cada pieza vale <b>${eur(S.value)}</b>; cada color es una cosa en la que gastamos. Cada color tiene una fila y cada semana una columna. Al gastar, la pieza cambia de base: va a la base de los gastos.</p></div>
     <div class="tw"><table><thead><tr><th>Color</th>${WEEK_LABEL.map((l,i)=>`<th>${l}<br><small>${WEEK_DAYS[i]}</small></th>`).join('')}</tr></thead>
       <tbody>${rows}</tbody><tfoot><tr><td>Total semana</td>${tw.map(t=>`<td class="num">${t} piezas = ${eur(t*S.value)}</td>`).join('')}</tr></tfoot></table></div>
     ${S.impr.on?`<div class="banner" style="background:transparent"><p><b>Aparte, un montón de ${imp} piezas de ${esc(S.impr.name.toLowerCase())}</b> (${eur(imp*S.value)}) para todo el mes. Solo se usa si pasa algo que no esperábamos.</p><div>${Array.from({length:imp},()=>brick(S.impr.color,'sm')).join('')}</div></div>`:''}
     <h3>Las reglas</h3>
     <ol class="rules">
       <li><b>El día 1 montamos la base del mes</b> con las piezas de la tabla: una fila por color y una columna por semana. Al lado, vacías, la <b>base de los gastos</b> y la <b>base de la hucha</b>.</li>
-      <li><b>Cuando alguien de casa paga algo, pasamos piezas de ese color</b> de la columna de esa semana a la base de los gastos. Se redondea: ${eur(S.value*2.3)} son 2 piezas; ${eur(S.value*2.7)} son 3.</li>
-      <li><b>Si se acaban las piezas de un color</b> en una semana, se cogen <b>del mismo color de las semanas siguientes</b>. Esas semanas tendrán menos: es la consecuencia de adelantarlas.</li>
-      <li><b>Al terminar la semana, las piezas que sobran se mueven</b>, no se quedan ahí. Primero rellenan los huecos <b>del mismo color</b> en las semanas siguientes. Si ese color ya está completo, la pieza <b>cambia de color</b> y rellena el hueco de otro (solo los que falten, nunca de más). Lo que quede después va a la <b>hucha</b>, o se puede <b>guardar de más</b> en un color de una semana siguiente si sabemos que viene un gasto. Así no se puede ahorrar comida que hemos cogido de semanas siguientes.</li>
-      <li>Lo que se paga solo desde el banco (la casa, la luz, los seguros…) <b>no va en la mesa</b>.</li>
-      <li>A fin de mes, en la base de la hucha veis cuánto habéis ahorrado: cada pieza son ${eur(S.value)}.</li>
+      <li><b>Cuando alguien paga algo, las piezas de ese color cambian de base</b>: de la columna de esa semana a la base de los gastos. Se redondea: ${eur(S.value*2.3)} son 2 piezas; ${eur(S.value*2.7)} son 3.</li>
+      <li><b>Si se acaban las piezas de un color</b> en una semana, se cogen <b>del mismo color de otra semana</b>, normalmente la siguiente. Como excepción, se pueden repartir entre varias. Esas semanas tendrán menos: es la consecuencia de adelantarlas.</li>
+      <li><b>El domingo, las piezas que sobran se mueven</b>, no se quedan ahí. Primero rellenan los colores de las semanas siguientes que tienen <b>menos de lo que les toca</b>, <b>cambiando de color</b> si hace falta. Si aún sobra, se reparte <b>como queramos</b> en las semanas siguientes, o va a la <b>hucha</b>.</li>
+      <li>Los <b>gastos fijos</b> (alquiler o hipoteca, luz, seguros…) se descuentan antes y <b>no van en la mesa</b>.</li>
+      <li>A fin de mes, en la base de la hucha se ve cuánto se ha ahorrado: cada pieza son ${eur(S.value)}. Los imprevistos que no se usaron se pueden ahorrar o pasar al mes siguiente.</li>
     </ol>
     <p class="muted">Para imprimirla, usa «Imprimir» de tu navegador en esta pestaña, o haz una captura de pantalla.</p>
   </section>`;
@@ -450,16 +450,10 @@ V.kit=()=>{
   </section>
   <div class="kit">
     <section class="panel" style="display:grid;gap:10px">
-      <h3>Opción 1: con las piezas que ya tenéis</h3>
-      <p>Si en casa hay piezas de construcción, buscad las de <b>2×4</b> (o todas de 2×2) en los colores de la tabla. Lo importante es que todas sean <b>del mismo tamaño</b>: así una pieza siempre vale lo mismo y el montón de cada hueco se lee de un vistazo.</p>
-      <p class="muted">Si os falta un color, cambiadlo en «Mi plan» por uno que sí tengáis.</p>
-      <p>Hacen falta tres bases: la del mes (filas de colores, columnas de semanas), la de los gastos y la de la hucha. Valen placas de construcción o un cartón con las casillas dibujadas.</p>
-    </section>
-    <section class="panel" style="display:grid;gap:10px">
-      <div class="row between"><h3>Opción 2: el kit Piezas del mes</h3><span class="pill warn">Prototipo, aún no a la venta</span></div>
+      <div class="row between"><h3>El kit Piezas del mes</h3><span class="pill warn">Prototipo, aún no a la venta</span></div>
       <p class="price">29 €</p>
       <ul style="margin:0;padding-left:20px;display:grid;gap:4px">
-        <li>120 piezas 2×4 compatibles en 6 colores (verde, amarillo, rojo, blanco, azul, marrón)</li>
+        <li>120 piezas 2×4 compatibles en 6 colores (verde, amarillo, rojo, blanco, azul, gris oscuro)</li>
         <li>Tres bases: la del mes con filas de colores y columnas de semana marcadas, la de los gastos y la de la hucha</li>
         <li>Pegatinas para marcar el valor de la pieza (5, 10 o 20 €) y el nombre de cada color</li>
         <li>Hoja de reglas para la nevera y código QR a esta app</li>
@@ -472,12 +466,12 @@ V.kit=()=>{
 
 V.como=()=>`<section class="panel" style="display:grid;gap:14px">
   <h2>Cómo funciona</h2>
-  <p>Piezas del mes convierte el dinero del día a día en piezas de colores que se ven y se tocan. Está pensado para casas con niños: ellos ven cómo se vacía la base del mes cuando se gasta y cómo crece la hucha cuando se ahorra.</p>
+  <p>Piezas del mes convierte el dinero del día a día en piezas de colores que se ven y se tocan. Sirve para cualquiera: si vives solo, en pareja, en familia o en un piso compartido. Se ve cómo se vacía la base del mes cuando se gasta y cómo crece la hucha cuando se ahorra.</p>
   <ol class="steps">
-    <li><div><b>Haced el plan</b><p class="muted">En «Mi plan», poned cuánto gastáis al mes en cada cosa (comida, ocio, gasolina…) y cuánto vale una pieza. La app calcula cuántas piezas lleva cada color cada semana.</p></div></li>
+    <li><div><b>Haced el plan</b><p class="muted">En «Mi plan», descontad los gastos fijos y poned cuánto gastáis al mes en cada cosa (comida, ocio, gasolina…) y cuánto vale una pieza. La app calcula cuántas piezas lleva cada color cada semana.</p></div></li>
     <li><div><b>Montad la mesa</b><p class="muted">El día 1, poned en la base del mes las piezas de la «Hoja de reglas»: una fila por color y una columna por semana. Al lado, vacías, la base de los gastos y la base de la hucha.</p></div></li>
-    <li><div><b>Al pagar, la pieza pasa atrás</b><p class="muted">Cuando alguien de casa pague algo, apuntadlo aquí y pasad las piezas que diga la app de la columna de esa semana a la base de los gastos. Si se acaba un color, se coge <b>del mismo color de las semanas siguientes</b>, que tendrán menos. Si ya no queda de ese color, la semana se queda en rojo: el montón de imprevistos es solo para imprevistos.</p></div></li>
-    <li><div><b>Al cerrar la semana, lo que sobra se mueve</b><p class="muted">Primero tapa los huecos de las semanas siguientes: del mismo color y, si ya están llenos, cambiando de color, solo los que falten. Lo que quede va a la hucha, o lo guardáis de más en un color y una semana en la que sabéis que viene un gasto. La app lo calcula sola. A fin de mes, en la base de la hucha veis cuánto habéis ahorrado.</p></div></li>
+    <li><div><b>Al pagar, la pieza cambia de base</b><p class="muted">Cuando alguien pague algo, apuntadlo aquí y moved las piezas que diga la app de la columna de esa semana a la base de los gastos. Si se acaba un color, se coge <b>del mismo color de otra semana</b>, normalmente la siguiente, que tendrá menos; como excepción, se puede repartir entre varias. Si ya no queda de ese color, la semana se queda en rojo: el montón de imprevistos es solo para imprevistos.</p></div></li>
+    <li><div><b>El domingo, lo que sobra se mueve</b><p class="muted">Primero rellena los colores de las semanas siguientes que tienen menos de lo que les toca, cambiando de color si hace falta. La app lo calcula sola. Si aún sobra, repartidlo como queráis en las semanas siguientes, o llevadlo a la hucha. A fin de mes, en la base de la hucha veis cuánto habéis ahorrado.</p></div></li>
   </ol>
   <p class="muted">Vuestros datos se guardan solo en este navegador. Nadie más los ve.</p>
   <div class="row"><button type="button" data-act="reset" class="danger">Volver a empezar con el ejemplo</button></div><div id="resetConfirm"></div>

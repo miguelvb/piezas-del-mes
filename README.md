@@ -24,10 +24,10 @@ La instalación como app y el modo sin conexión necesitan `https`.
 ## Reglas
 
 1. El día 1 se monta la base del mes: una fila por color y una columna por semana. Al lado, vacías, la base de los gastos y la base de la hucha.
-2. Cuando alguien de casa paga algo, pasa las piezas de ese color de la columna de esa semana a la base de los gastos.
-3. Si se acaba un color, se coge del mismo color de las semanas siguientes. Si ya no queda, la semana queda en rojo. Los imprevistos son solo para imprevistos.
-4. Al cerrar la semana, lo que sobra primero tapa los huecos de las semanas siguientes: del mismo color y, si ya están llenos, cambiando de color, solo los que falten. Lo que quede va a la hucha, o se guarda de más en una semana en la que se sabe que viene un gasto.
-5. A fin de mes, en la base de la hucha se ve cuánto se ha ahorrado.
+2. Los gastos fijos se descuentan antes y no van en la mesa. Cuando alguien paga algo, las piezas de ese color cambian de base: de la columna de esa semana a la base de los gastos.
+3. Si se acaba un color, se coge del mismo color de otra semana, normalmente la siguiente (como excepción, repartido entre varias). Si ya no queda, la semana queda en rojo. Los imprevistos son solo para imprevistos.
+4. El domingo, lo que sobra primero rellena los colores de las semanas siguientes que tienen menos de lo que les toca, cambiando de color si hace falta. Si aún sobra, se reparte como se quiera en las semanas siguientes, o va a la hucha.
+5. A fin de mes, en la base de la hucha se ve cuánto se ha ahorrado. Los imprevistos que sobran se pueden ahorrar o pasar al mes siguiente.
 
 ## Siguiente paso
 

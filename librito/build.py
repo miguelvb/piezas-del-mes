@@ -132,12 +132,13 @@ page(f'''<p class="eye">REGLA 2</p><h1>Si se acaba un color</h1>
 <div class="box"><b>Los imprevistos son solo para imprevistos.</b> Una avería o una visita al médico, sí. Un capricho porque se acabó el ocio, no. Si los tienes por semanas y un imprevisto no cabe, se coge gris oscuro de las semanas siguientes, como con cualquier color.</div>''', 7)
 
 # 8 · regla 3
-c8 = full(); c8.update({(r, 0): 0 for r in range(5)}); c8[(2, 2)] = 4; c8[(1, 1)] = 0
+c8 = full(); c8.update({(r, 0): 0 for r in range(5)}); c8[(2, 2)] = 4
 page(f'''<p class="eye">REGLA 3 · CADA DOMINGO</p><h1>Al cerrar la semana, lo que sobra se mueve</h1>
-<p>Lo que queda en la columna de la semana no se puede quedar ahí. Se mueve siempre, de una de estas dos formas:</p>
-<ol><li><b>A la hucha.</b> Es lo normal.</li>
-<li><b>De más en otra semana</b>, si sabes que viene un gasto (un cumpleaños, un viaje). Puede ir en su mismo color o cambiar al color de ese gasto, sin pasar por la hucha.</li></ol>
-{board(c8, marks=[(2, 2, '#C9668F')], caption='Semana 1 cerrada. El sábado de la semana 3 hay un cumpleaños: 2 piezas blancas que sobraban se guardan como amarillas en la semana 3. El resto de lo que sobró fue a la hucha.')}
+<p>Lo que queda en la columna de la semana no se puede quedar ahí. Se mueve siempre, en este orden:</p>
+<ol><li><b>Rellena los colores que tienen menos de lo que les toca</b> en las semanas siguientes (los huecos que dejó la regla 2). La pieza cambia de color si hace falta.</li>
+<li><b>Si aún sobra y sabes que viene un gasto</b> (un cumpleaños, un viaje), déjalo de más en esa semana, en su color o en el de ese gasto.</li>
+<li><b>Lo que queda va a la hucha.</b></li></ol>
+{board(c8, marks=[(1, 1, '#237841'), (2, 2, '#C9668F')], caption='Semana 1 cerrada. La semana 2 tenía un hueco de 3 rojas (regla 2): 2 verdes y 1 amarilla que sobraban se convierten en rojas y lo rellenan. El sábado de la semana 3 hay un cumpleaños: 2 blancas se guardan como amarillas. El resto fue a la hucha.')}
 <p class="cap">Los grises oscuros que sobran el domingo se quedan para imprevistos. A fin de mes, los que no hayas usado se pueden ahorrar o pasar al mes siguiente.</p>''', 8)
 
 # 9 · fin de mes
@@ -148,7 +149,7 @@ page('''<p class="eye">FIN DE MES</p><h1>Mira la hucha</h1>
 <h3>Preguntas que suelen salir</h3>
 <p class="q">¿Y si pago con tarjeta?</p><p class="a">Da igual cómo se pague: la pieza cambia de base igual.</p>
 <p class="q">¿Y si se me olvida mover una pieza?</p><p class="a">Si está apuntado en la hoja, el domingo se pone al día.</p>
-<p class="q">¿Y si me faltan piezas de un color?</p><p class="a">Suma las piezas del plan. Conviene tener un 20 o 30 % de repuesto, porque al guardar de más una pieza puede cambiar de color.</p>
+<p class="q">¿Y si me faltan piezas de un color?</p><p class="a">Suma las piezas del plan. Conviene tener un 20 o 30 % de repuesto, porque las piezas cambian de color al rellenar huecos o al guardar de más.</p>
 <p class="q">¿Quién mueve las piezas?</p><p class="a">Quien paga. Cualquiera de casa.</p>''', 9)
 
 # 10 · todo a mano
@@ -166,7 +167,7 @@ page(f'''<p class="eye">SIN PANTALLAS · 1</p><h1>Todo a mano: el plan</h1>
 <table class="t sm"><tr class="h"><td>COLOR</td><td>€ AL MES</td><td>PIEZAS</td><td>S1</td><td>S2</td><td>S3</td><td>S4</td></tr>{r10}
 <tr><td>Gris oscuro</td><td>150</td><td>15</td><td colspan="4">aparte, o 4 · 4 · 4 · 3</td></tr>
 <tr class="tot"><td>Total</td><td>830</td><td>83</td><td colspan="4"></td></tr></table></div>
-<p class="cap"><b>¿Cuántas piezas necesitas?</b> Las del plan más un 25 % de repuesto, porque al guardar de más algunas cambian de color: 83 + 21 = unas 104 piezas.</p>''', 10)
+<p class="cap"><b>¿Cuántas piezas necesitas?</b> Las del plan más un 25 % de repuesto, porque al cerrar la semana algunas cambian de color: 83 + 21 = unas 104 piezas.</p>''', 10)
 
 # 11 · hoja nevera
 t11 = [('lun 2', 'Súper', 'verde', '38,50', '4'), ('mar 3', 'Gasolina', 'rojo', '28,00', '3'), ('jue 5', 'Cañas', 'amarillo', '12,00', '1'),
@@ -191,9 +192,10 @@ page(f'''<p class="eye">SIN PANTALLAS · 3</p><h1>El domingo, con lápiz</h1>
 <div class="card"><p class="ct">Cierre de la semana 1</p>
 <table class="t sm"><tr class="h"><td>COLOR</td><td>PLAN</td><td>GASTADO</td><td>SOBRA</td></tr>{r12}
 <tr class="tot"><td>Total</td><td></td><td></td><td>7</td></tr></table>
-<ol><li><b>¿Viene un gasto?</b> El sábado de la semana 3 hay un cumpleaños: las 2 blancas se guardan como amarillas en la semana 3.</li>
-<li><b>Lo que queda:</b> 2 verdes + 1 amarilla + 2 azules = 5 piezas = <b>50 € a la hucha</b>.</li></ol>
-<p class="cs">Si no hubiera ningún gasto a la vista, las 7 piezas irían a la hucha: 70 €.</p></div>''', 12)
+<ol><li><b>¿Algún color tiene menos de lo que le toca?</b> El rojo de la semana 2: le faltan 3. 2 verdes + 1 amarilla se convierten en 3 rojas y van a la semana 2.</li>
+<li><b>¿Viene un gasto?</b> El sábado de la semana 3 hay un cumpleaños: las 2 blancas se guardan como amarillas en la semana 3.</li>
+<li><b>Lo que queda:</b> 2 azules = 2 piezas = <b>20 € a la hucha</b>.</li></ol>
+<p class="cs">Si no hubiera ningún gasto a la vista, las 2 blancas también irían a la hucha: 40 €.</p></div>''', 12)
 
 # 13 · cuentas fin de mes
 t13 = [('Verde', '28', '24', '+4'), ('Rojo', '12', '14', '−2'), ('Amarillo', '8', '7', '+1'), ('Azul', '12', '8', '+4'), ('Blanco', '8', '4', '+4'), ('Gris oscuro', '15', '6', '+9')]
@@ -202,18 +204,18 @@ page(f'''<p class="eye">SIN PANTALLAS · 4</p><h1>Las cuentas de fin de mes</h1>
 <p>Con las cuatro hojas de la semana y el cuaderno, en diez minutos tienes el resumen del mes.</p>
 <div class="card"><p class="ct">Ejemplo de resumen</p>
 <table class="t sm"><tr class="h"><td>COLOR</td><td>PLAN</td><td>GASTADO</td><td>DIFERENCIA</td></tr>{r13}</table>
-<p class="cs">Hucha: 50 + 30 + 0 + 30 = <b>11 piezas = 110 €</b>.</p>
+<p class="cs">Hucha: 20 + 40 + 10 + 40 = <b>11 piezas = 110 €</b>.</p>
 <p class="cs">Imprevistos sin usar: 9 piezas = 90 €. Se pueden ahorrar o pasar al mes siguiente.</p>
 <p class="cs">Rojo: se gastaron 2 piezas más de lo previsto (20 €). El mes que viene, 14 piezas rojas.</p></div>
 <h3>Comprobación rápida</h3>
-<p>Piezas del plan (sin los grises oscuros) = gastadas + hucha. En el ejemplo: 68 = 57 + 11. Si no cuadra, falta apuntar algún gasto.</p>''', 13)
+<p>Piezas del plan (sin los grises oscuros) = gastadas + hucha. En el ejemplo: 68 = 57 + 11 (las guardadas de más ya cuentan como gastadas o vuelven a la hucha). Si no cuadra, falta apuntar algún gasto.</p>''', 13)
 
 # 14 · hoja fotocopiable
 rows14 = ''.join('<tr><td></td><td></td><td></td><td></td><td></td></tr>' for _ in range(13))
 page(f'''<div class="sh"><h1>Semana ____</h1><span>Del ____ al ____ · pieza = ____ €</span></div>
 <table class="t blank"><tr class="h"><td>DÍA</td><td>QUÉ</td><td>COLOR</td><td>€</td><td>PIEZAS</td></tr>{rows14}</table>
 <div class="two"><div><p class="ct">Sueltos (menos de 5 €)</p><table class="t lines"><tr><td>Verde</td></tr><tr><td>Rojo</td></tr><tr><td>Amarillo</td></tr><tr><td>Azul</td></tr><tr><td>Blanco</td></tr></table></div>
-<div><p class="ct">Cierre del domingo</p><table class="t lines"><tr><td>Sobran</td></tr><tr><td>Guardadas de más</td></tr><tr><td>A la hucha</td></tr><tr><td>Semana en rojo <span class="sn">sí · no</span></td></tr></table></div></div>
+<div><p class="ct">Cierre del domingo</p><table class="t lines"><tr><td>Sobran</td></tr><tr><td>Rellenan huecos</td></tr><tr><td>Guardadas de más</td></tr><tr><td>A la hucha</td></tr><tr><td>Semana en rojo <span class="sn">sí · no</span></td></tr></table></div></div>
 <p class="foot">Hoja de la nevera · fotocopia una por semana</p>''', 14)
 
 # 15 · app
@@ -233,7 +235,7 @@ page(f'''<div class="rh"><div class="ri">{SYM}</div><h1>Las reglas, en corto</h1
 <li><b>Al pagar:</b> se apunta y la pieza cambia a la base de los gastos, en su semana. Se redondea; lo de menos de 5 €, a «sueltos».</li>
 <li><b>Si se acaba un color:</b> se coge del mismo color de otra semana, normalmente la siguiente. Si no queda, la semana se queda en rojo.</li>
 <li><b>Imprevistos:</b> solo para imprevistos, en un montón o por semanas.</li>
-<li><b>Cada domingo:</b> lo que sobra va a la hucha, o se guarda de más en otra semana si viene un gasto.</li>
+<li><b>Cada domingo:</b> lo que sobra rellena primero los colores que tienen menos de lo que les toca; si aún sobra y viene un gasto, se guarda de más; el resto, a la hucha.</li>
 <li><b>Fin de mes:</b> mira la hucha, decide qué hacer con los imprevistos que sobran y haz el plan siguiente.</li></ol>
 <p class="legal">Piezas del mes · prototipo de arkinos.net · Usa piezas de construcción compatibles; no tiene relación con ninguna marca de juguetes. Contiene piezas pequeñas: no apto para menores de 3 años.</p>''', 16)
 
